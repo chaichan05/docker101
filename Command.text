@@ -91,3 +91,4 @@ docker run --name pma --network wordpress -p 8888:80 -e PMA_ARBITRARY=1 -d phpmy
 
 //ใช้คำสั่งนี้เพื่อรันคอนเทนเนอร์ WordPress โดยตั้งชื่อคอนเทนเนอร์ว่า "wordpress" และเชื่อมต่อกับเครือข่าย "wordpress" ที่คุณได้สร้างขึ้นก่อนหน้านี้ นอกจากนี้ยังตั้งค่าตัวแปรสภาพแวดล้อมสำหรับการเชื่อมต่อฐานข้อมูล MySQL ซึ่งจะช่วยให้ WordPress สามารถเชื่อมต่อกับ MySQL ได้อย่างถูกต้องภายในคอนเทนเนอร์นี้ และยังทำการแมปพอร์ต 888 ของโฮสต์ไปยังพอร์ต 80 ของคอนเทนเนอร์ ซึ่งจะทำให้คุณสามารถเข้าถึงเว็บไซต์ WordPress ที่กำลังรันอยู่ในคอนเทนเนอร์ได้ผ่านทางเบราว์เซอร์ของคุณโดยการเข้าไปที่ http://localhost:888 หรือ http://<IP_ADDRESS>:888 ขึ้นอยู่กับการตั้งค่าของระบบของคุณ
 docker run -d --name wordpress --network wordpress -p 888:80 -e WORDPRESS_DB_HOST=mysql -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress_db wordpress
+//
