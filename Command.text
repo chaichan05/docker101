@@ -91,4 +91,41 @@ docker run --name pma --network wordpress -p 8888:80 -e PMA_ARBITRARY=1 -d phpmy
 
 //ใช้คำสั่งนี้เพื่อรันคอนเทนเนอร์ WordPress โดยตั้งชื่อคอนเทนเนอร์ว่า "wordpress" และเชื่อมต่อกับเครือข่าย "wordpress" ที่คุณได้สร้างขึ้นก่อนหน้านี้ นอกจากนี้ยังตั้งค่าตัวแปรสภาพแวดล้อมสำหรับการเชื่อมต่อฐานข้อมูล MySQL ซึ่งจะช่วยให้ WordPress สามารถเชื่อมต่อกับ MySQL ได้อย่างถูกต้องภายในคอนเทนเนอร์นี้ และยังทำการแมปพอร์ต 888 ของโฮสต์ไปยังพอร์ต 80 ของคอนเทนเนอร์ ซึ่งจะทำให้คุณสามารถเข้าถึงเว็บไซต์ WordPress ที่กำลังรันอยู่ในคอนเทนเนอร์ได้ผ่านทางเบราว์เซอร์ของคุณโดยการเข้าไปที่ http://localhost:888 หรือ http://<IP_ADDRESS>:888 ขึ้นอยู่กับการตั้งค่าของระบบของคุณ
 docker run -d --name wordpress --network wordpress -p 888:80 -e WORDPRESS_DB_HOST=mysql -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress_db wordpress
-//
+
+//ใช้คำสั้ง docker network create เพื่อสร้างเครือข่าย Docker ใหม่ที่ชื่อว่า "wordpress" ซึ่งจะช่วยให้คอนเทนเนอร์ WordPress และ MySQL สามารถสื่อสารกันได้อย่างง่ายดายภายในเครือข่ายนี้
+docker network create wordpress
+
+//แบบที่ 1
+docker exec -it pma sh
+
+//แบบที่ 2 volume
+//ใช้เพื่อดูรายการของโวลุ่ม Docker ที่มีอยู่ในระบบของคุณ ซึ่งจะช่วยให้คุณสามารถตรวจสอบว่าโวลุ่มที่คุณต้องการใช้งานถูกสร้างขึ้นสำเร็จหรือไม่
+docker volume ls
+
+//ใช้คำสั่งนี้เพื่อสร้างโวลุ่ม Docker ใหม่ที่ชื่อว่า "wp_volume" ซึ่งจะช่วยให้คุณสามารถเก็บข้อมูลของเว็บไซต์ WordPress ของคุณได้อย่างถาวรภายในโวลุ่มนี้
+docker volume create wp_volume
+
+//ใช้คำสั่งนี้เพื่อสร้างโวลุ่ม Docker ใหม่ที่ชื่อว่า "mysql_volume" ซึ่งจะช่วยให้คุณสามารถเก็บข้อมูลของฐานข้อมูล MySQL ของคุณได้อย่างถาวรภายในโวลุ่มนี้
+docker volume create mysql_volume
+
+//ใช้คำสั่งนี้เพื่อรันคอนเทนเนอร์ MySQL โดยตั้งชื่อคอนเทนเนอร์ว่า "mysql" และเชื่อมต่อกับเครือข่าย "wordpress" ที่คุณได้สร้างขึ้นก่อนหน้านี้ นอกจากนี้ยังตั้งค่าตัวแปรสภาพแวดล้อมสำหรับรหัสผ่านของผู้ใช้ root, ชื่อฐานข้อมูล, ชื่อผู้ใช้ และรหัสผ่านสำหรับ MySQL ซึ่งจะช่วยให้คุณสามารถใช้งาน MySQL ได้อย่างง่ายดายภายในคอนเทนเนอร์นี้ และยังทำการแมปโวลุ่ม "mysql_volume" ไปยังไดเรกทอรี /var/lib/mysql ภายในคอนเทนเนอร์ ซึ่งจะช่วยให้ข้อมูลของฐานข้อมูล MySQL ถูกเก็บไว้ในโวลุ่มนี้อย่างถาวร
+docker volume rm wp_volume mysql_volume
+
+//ใช้คำสั่งนี้เพื่อรันคอนเทนเนอร์ WordPress โดยตั้งชื่อคอนเทนเนอร์ว่า "wordpress" และเชื่อมต่อกับเครือข่าย "wordpress" ที่คุณได้สร้างขึ้นก่อนหน้านี้ นอกจากนี้ยังตั้งค่าตัวแปรสภาพแวดล้อมสำหรับการเชื่อมต่อฐานข้อมูล MySQL ซึ่งจะช่วยให้ WordPress สามารถเชื่อมต่อกับ MySQL ได้อย่างถูกต้องภายในคอนเทนเนอร์นี้ และยังทำการแมปโวลุ่ม "wp_volume" ไปยังไดเรกทอรี /var/www/html ภายในคอนเทนเนอร์ ซึ่งจะช่วยให้ข้อมูลของเว็บไซต์ WordPress ถูกเก็บไว้ในโวลุ่มนี้อย่างถาวร
+docker container inspect wordpress
+
+docker volume create wp_volume
+docker network create wordpress02
+docker volume create mysql_volume
+
+รหัส phpMyAdmin
+mysql02 
+wordpress
+wordpress
+
+C:\docker101\mysql
+//แบบ 3 bildmount
+docker network create wordpress03
+docker run -d --name mysql03 --network wordpress03 -v C:\docker101\mysql -e MYSQL_ROOT_PASSWORD=1111 -e MYSQL_DATABASE=wordpress03_db -e MYSQL_USER=wordpress -e MYSQL_PASSWORD=wordpress  mysql:5.7
+docker run -d --name wordpress03 --network wordpress03 -v C:\docker101\wp:/var/www/html -e WORDPRESS_DB_HOST=mysql03 -e WORDPRESS_DB_USER=wordpress -e WORDPRESS_DB_PASSWORD=wordpress -e WORDPRESS_DB_NAME=wordpress03_db -p 890:80 wordpress
+docker run --name pma03 --network wordpress03 -p 8890:80 -e PMA_ARBITRARY=1 -d phpmyadmin/phpmyadmin
